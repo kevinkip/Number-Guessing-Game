@@ -10,13 +10,12 @@ USERNAME_CHECK=$($PSQL "SELECT DISTINCT name FROM players WHERE name LIKE '$USER
 GAMES_PLAYED=$($PSQL "SELECT COUNT(*) FROM games JOIN players USING(player_id) WHERE name='$USERNAME'")
 # extract number of guesses from best game
 BEST_GAME=$($PSQL "SELECT MIN(number_of_guesses) FROM games JOIN players USING(player_id) WHERE name='$USERNAME'")
-if [[ "$USERNAME_CHECK" != "$USERNAME" ]]
+if [[ -z $USERNAME_CHECK ]]
 then
   echo "Welcome, $USERNAME! It looks like this is your first time here."
   # insert new player
   INSERT_NEW_PLAYER=$($PSQL "INSERT INTO players(name) VALUES('$USERNAME')")
-elif [[ "$USERNAME_CHECK" == "$USERNAME" ]]
-then
+else
   echo "Welcome back, $USERNAME! You have played $GAMES_PLAYED games, and your best game took $BEST_GAME guesses."
 fi
 # Game logic starts here
